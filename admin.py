@@ -3,10 +3,7 @@ from django.db.models.fields.files import ImageField
 from django.contrib.admin.widgets import AdminFileWidget
 
 
-
 class CustomFileInputWidget(AdminFileWidget):
-
-
     def value_from_datadict(self, data, files, name):
         import re
         from django.core.files.uploadedfile import SimpleUploadedFile
@@ -34,30 +31,40 @@ class ImageInlineAdmin(admin.StackedInline):
     formfield_overrides = {
         ImageField: {'widget': CustomFileInputWidget}
     }
+
+    exclude_bootstrap_css = False
+    exclude_bootstrap_js = False
+    exclude_jquery = False
+
     extra = 0
     template = u'admin/edit_inline/ffiler.html'
 
     @property
     def media(self):
-        from django import forms
         from django.contrib.admin.templatetags.admin_static import static
 
         media = super(ImageInlineAdmin, self).media
-        js_list = (
-            static("ffiler/js/jq.2.0.3.js"),
+        js_list = [
+
             static("ffiler/js/jquery.magnific-popup.min.js"),
             static("ffiler/js/ffiler.js"),
-            static("ffiler/js/bootstrap.min.js"),
             static("ffiler/js/django_transport.js"),
             static("ffiler/js/jquery.magnific-popup.min.js"),
-        )
+        ]
         css_list = {
-            'all': (static('ffiler/css/bootstrap.css'),
-                    static('ffiler/css/magnific-popup.css'),
-                    static('ffiler/css/ffiler.css'),
-            )
-
+            'all': [
+                static('ffiler/css/magnific-popup.css'),
+                static('ffiler/css/ffiler.css'),
+            ]
         }
+
+        if not self.exclude_bootstrap_css:
+            css_list['all'].insert(0, static('ffiler/css/bootstrap.css'))
+        if not self.exclude_bootstrap_js:
+            js_list.insert(0, static("ffiler/js/bootstrap.min.js"))
+        if not self.exclude_jquery:
+            js_list.insert(0, static("ffiler/js/jq.2.0.3.js"), )
+
         media.add_js(js_list)
         media.add_css(css_list)
 
