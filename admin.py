@@ -47,6 +47,7 @@ class ImageInlineAdmin(admin.StackedInline):
         js_list = [
 
             static("ffiler/js/jquery.magnific-popup.min.js"),
+            static("ffiler/js/sortable.js"),
             static("ffiler/js/ffiler.js"),
             static("ffiler/js/django_transport.js"),
             static("ffiler/js/jquery.magnific-popup.min.js"),

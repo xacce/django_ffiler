@@ -57,11 +57,11 @@
     display: none;
     opacity: 0.8;
 
-
 }
+
 /*.gallery_delete_btn button{*/
-    /*width: 16px;*/
-    /*height: 16px;*/
+/*width: 16px;*/
+/*height: 16px;*/
 /*}*/
 
 .gallery_delete_btn:hover {
@@ -72,4 +72,15 @@
     margin: 0px !important;
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
+}
+
+.filler_img_wrap.sortable-dragging {
+    zoom: 1.2;
+}
+
+.sortable-placeholder {
+    border: 1px solid rgba(72, 72, 72, 0.99);
+    background-color: #ececec;
+    float:left;
+    margin: 5px;
 }

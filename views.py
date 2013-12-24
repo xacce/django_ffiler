@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from django.shortcuts import HttpResponse
+from django.shortcuts import HttpResponse,Http404
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 
@@ -16,10 +16,11 @@ class Upload(TemplateView):
         from uuid import uuid4
         import os
 
+        allow = ['jpg', 'png', 'gif', 'jpeg']
         file = request.FILES['file']
-        ext = file._get_name().split('.')[-1]
-        # if ext not in allow:
-        #     return HttpResponseNotAllowed('Invalid file extension')
+        ext = file._get_name().split('.')[-1].lower()
+        if ext not in allow:
+            return Http404('Invalid file extension')
         filename = "%s.%s" % (uuid4(), ext)
         path = os.path.join(settings.MEDIA_ROOT, filename)
         dest = open(path, 'wb+')

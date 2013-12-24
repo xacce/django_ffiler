@@ -14,6 +14,8 @@
         ffiler_upload_url: '',
         callback_preupload: false,
         callback_postupload: false,
+        callback_sortupdate: false,
+        callback_all_loaded: false,
         targets: false,
         rules: {
             2: [10, 150],
@@ -24,14 +26,14 @@
             12: [700, 799],
             14: [800, 899],
             16: [900, 999],
-            20: [1000, 1000000],
+            20: [1000, 1000000]
         },
         func_make_thumbnail_url: function (url) {
             return url
         },
         callback_add_item: false,
         callback_remove_item: false,
-        rule_default: 15,
+        rule_default: 15
     };
 
     function Plugin(wrapper, options) {
@@ -65,20 +67,37 @@
             }
 
             this.file_object.bind('change', function () {
+                var loaded = 0
+                var total = this.files.length
+                var int = setInterval(function () {
+
+                    if (loaded >= total) {
+                        console.log('ALL UPLOADED')
+                        that.remake()
+                        that.resortable()
+                        if (that.options.callback_all_loaded) {
+                            that.options.callback_all_loaded.apply(that)
+                        }
+                        clearInterval(int)
+                    }
+                }, 100)
+
                 $.each(this.files, function (i, file) {
                     if (!file.type.match(/image.*/)) {
-                        // Отсеиваем не картинки
+                        loaded++
                         return true;
                     }
 
 
                     var reader = new FileReader();
-                    reader.onload = (function (that) {
+                    var load = (function (that) {
+
                         return function (e) {
                             that.add_item(e.target.result, true, file)
-                            that.remake()
+                            loaded++
                         };
                     })(that);
+                    reader.onload = load
 
                     reader.readAsDataURL(file);
                 });
@@ -87,12 +106,13 @@
 
 //            this.targets = this.wrapper.find('.filler_img_wrap')
             this.remake()
+            this.resortable()
             this.wrapper.magnificPopup({
                 delegate: 'a',
                 type: 'image',
                 gallery: {
                     enabled: true
-                },
+                }
 
             });
             $(window).resize(function () {
@@ -142,6 +162,19 @@
             this.targets = this.wrapper.find('.filler_img_wrap')
         },
 
+        resortable: function () {
+            var that = this
+            this.wrapper.sortable('destroy')
+            this.wrapper.sortable({
+                items: '.filler_img_wrap',
+                forcePlaceholderSize: true
+            }).bind('sortupdate', function () {
+                    if (that.options.callback_sortupdate) {
+                        that.options.callback_sortupdate.apply(that)
+                    }
+                })
+            console.log(2)
+        },
         /**
          * Add new item in ffiler.
          *
@@ -182,7 +215,7 @@
                     if (that.options.callback_postupload) {
                         that.options.callback_postupload.apply(that, [res, ffiler_object])
                     }
-                },
+                }
             }
 
             if (this.options.callback_preupload) {
@@ -228,7 +261,7 @@
             this.targets.css('height', img_w)
             this.targets.css('min-height', img_w)
             this.targets.css('max-height', img_w)
-        },
+        }
     };
 
     $.fn[pluginName] = function (options) {
