@@ -46,7 +46,7 @@
             'callback_preupload': function (options, ffiler_object) {
                 var token = that.parents('form').find('input[name="csrfmiddlewaretoken"]').val()
                 options['data'].append('csrfmiddlewaretoken', token)
-                $('.submit-row').find('input,button').attr('disabled', 'disabled')
+                $('.submit-row,.form-actions').find('input,button').attr('disabled', 'disabled')
             },
             'callback_postupload': function (res, ffiler_object) {
                 var row = $('#' + ffiler_object.data('django_row'))
@@ -59,7 +59,7 @@
                 })
             },
             'callback_all_loaded': function () {
-                $('.submit-row').find('input,button').removeAttr('disabled')
+                $('.submit-row,.form-actions').find('input,button').removeAttr('disabled')
             },
             'func_make_thumbnail_url': function (url) {
                 return '/admin/django_ffiler/crop' + url
