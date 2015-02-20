@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models.fields.files import ImageField
 from django.contrib.admin.widgets import AdminFileWidget
 
-
+#1
 class CustomFileInputWidget(AdminFileWidget):
     def value_from_datadict(self, data, files, name):
         import re
